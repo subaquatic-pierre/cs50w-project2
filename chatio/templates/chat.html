@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block main %}
+
+<div class="container">
+    <div class="row my-5 no-gutters">
+        <div class="col-md-8 order-2">
+            <main id="main-chat">
+                
+            </main>
+        </div>
+        <div class="col-md-2 order-1">
+            <aside id="room-sidebar">
+                <ul class="list-group">  
+                    {% for room in rooms %}
+                        <li class="list-group-item room-list">{{ room|title }}</li>
+                    {% endfor %}                    
+                </ul>
+            </aside>
+        </div>
+        <div class="col-md-2 order-3">
+            <aside id="user-sidebar">
+                <ul class="list-group">  
+                    {% for user in users %}
+                        <li class="list-group-item user-list"><a>{{ user }}</a></li>
+                    {% endfor %}                    
+                </ul>
+            </aside>
+        </div>
+    </div>
+    
+    
+    <form id="messageForm" action="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-row">
+            <div class="col-md-10">
+                <div class="form-group">
+                    {% if form.message.errors %}
+                        {{ form.message(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.message(class='form-control form-control-lg' , autocomplete='off', autofocus=true) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    {{ form.submit(class='btn btn-success btn-lg btn-block') }}
+                </div>
+            </div>
+        </div>
+        
+    </form>
+
+        <p>
+            
+        </p>
+    
+    
+    
+</div>
+
+<script type="text/javascript">
+    const username = `{{ current_user.id }}`;
+    const users = [];
+    const rooms = [];
+    
+    {% for user in rooms %}
+        rooms.push(`{{room}}`)
+    {% endfor %}
+
+    {% for room in rooms %}
+        rooms.push(`{{room}}`)
+    {% endfor %}
+</script>
+
+{% endblock main %}

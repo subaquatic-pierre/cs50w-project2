@@ -1,0 +1,51 @@
+body {
+    
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.list-group-item {
+    border-radius: 0!important;
+    cursor: pointer;
+}
+
+#main-chat {
+    height: 600px;
+    background:#eee;
+    padding: 15px;
+}
+
+p {
+    padding: 0;
+    margin-bottom: 18px;
+    line-height: 1;
+}
+
+span {
+    margin-bottom: 10px;
+}
+
+#room-sidebar {
+    height: 600px;
+    background: #aaaaaa;
+
+}
+
+a {
+    font-style: none;
+    cursor: pointer;
+}
+
+.nav-link {
+    text-transform: uppercase;
+    font-size: 18px;
+    color: white!important;
+}
+
+.navbar-brand {
+    font-size: 24px;
+
+}
