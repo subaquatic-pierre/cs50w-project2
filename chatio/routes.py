@@ -1,53 +1,50 @@
 from time import localtime, strftime
 import string
-from chatio import app, login_manager, db, socketio
+from chatio import app, login_manager, db, socketio, all_rooms, active_users
 from flask import render_template, url_for, redirect, flash
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import InputRequired
 from flask_login import UserMixin, login_user, logout_user, current_user
 from flask_socketio import send, emit, join_room, leave_room
+from chatio.models import *
+from chatio.forms import LoginForm, ChatForm
 
-##### ROOM CLASS #####
+##### ROUTES #####
 
-all_rooms = []
-active_users = []
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = LoginForm()
 
-class Room:
+    if form.validate_on_submit():
+        user = User()
+        user.id = form.username.data
+        # Check if username is teken
+        if user.id in active_users:
+            flash(f'Sorry that username is alreaedy taken', 'info')
+            return redirect(url_for('index'))
+        active_users.append(user.id)
+        login_user(user)
+        return redirect(url_for('mainchat'))
 
-    def __init__(self, name):
-        self.name = name
-        self.users = []
-        all_rooms.append(self)
+    return render_template('index.html', title='Home', form=form)
 
+    
+@app.route('/chat', methods=['GET', 'POST'])
+def mainchat():
+    form = ChatForm()
+    return render_template('chat.html', title='Chat', form=form, rooms=all_rooms)
 
-    def del_room(self):
-        all_rooms.remove(self)
-
-    def del_user(self, user):
-        if user in self.users:
-            self.users.remove(user)
-
-    def add_user(self, user):
-        self.users.append(user)
-
-    def __repr__(self):
-        return f"Room:( name: {self.name}, users:{self.users} )"
-
-def find_room(room):
-    for i in all_rooms:
-        if i.name == room:
-            return i
-
-
-scuba_r = Room('scuba')
-fishes_r = Room('fishes')
-sharks_r = Room('sharks')
-dolphins_r = Room('dolphins')
+    
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    # User logged in and is in room, clicks log out button, or logout route
+    if current_user.id and current_user.id in active_users:
+        active_users.remove(current_user.id)
+        flash(f'Thank you for joining us!', 'info')
+    # User logged in but may not be in a room
+    logout_user()    
+    return redirect(url_for('index'))
 
 
 ##### SOCKET IO HANDELERS #####
-
 
 # Message sent to server
 @socketio.on('message')
@@ -94,76 +91,11 @@ def leave(data):
         leave_room(room.name)
     except:
         return None
-        
-    
 
-
-##### FORMS #####
-
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[InputRequired()])
-    submit = SubmitField('Login', id='login-btn')
-
-
-class ChatForm(FlaskForm):
-    message = StringField('Message')
-    submit = SubmitField('Send')
-
-
-##### MODELS #####
-
-class User(UserMixin):
-    pass
-
-
-@login_manager.user_loader
-def user_loader(username):
-    user = User()
-    user.id = username
-    return user
-
-
-@login_manager.request_loader
-def request_loader(request):
-    user = User()
-    user.id = request.form.get('username')
-    return user
-
-
-##### ROUTES #####
-
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        user = User()
-        user.id = form.username.data
-        # Check if username is teken
-        if user.id in active_users:
-            flash(f'Sorry that username is alreaedy taken', 'info')
-            return redirect(url_for('index'))
-        active_users.append(user.id)
-        login_user(user)
-        return redirect(url_for('mainchat'))
-
-    return render_template('index.html', title='Home', form=form)
-
-    
-@app.route('/chat', methods=['GET', 'POST'])
-def mainchat():
-    form = ChatForm()
-    return render_template('chat.html', title='Chat', form=form, rooms=all_rooms)
-
-    
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    # User logged in and is in room, clicks log out button, or logout route
-    if current_user.id and current_user.id in active_users:
-        active_users.remove(current_user.id)
-        flash(f'Thank you for joining us!', 'info')
-    # User logged in but may not be in a room
-    logout_user()    
-    return redirect(url_for('index'))
-
+# Create room
+@socketio.on('create')
+def create(data):
+    roomname = f"{data['room']}_r"
+    roomname = Room(data['room'])
+    admin = data['username']
+    emit('created', {'room':roomname.name, 'users':admin})

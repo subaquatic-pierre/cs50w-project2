@@ -7,6 +7,16 @@
 {% block main %}
 
 <div class="container">
+    <div class="row my-4">
+        <div class="col-md-12">
+            {% if current_user.id == None %}
+            {% else %}
+                <a href="#" class="btn btn-outline-info" id="create-room">CREATE ROOM</a>
+                <a href="#" class="btn btn-outline-warning" id="leave-room">LEAVE ROOM</a>
+            {% endif %}
+        </div>
+    </div>
+    
     <div class="row my-5 no-gutters">
         <div class="col-md-8 order-2">
             <main id="main-chat">
@@ -26,13 +36,12 @@
             <aside >
                 <ul class="list-group" id="user-list">  
                     {% for user in rooms[0].users %}
-                        <li class="list-group-item user-list"><a>{{ user }}</a></li>
+                        <li class="list-group-item user-list">{{ user }}</li>
                     {% endfor %}                    
                 </ul>
             </aside>
         </div>
-    </div>
-    
+    </div>    
     
     <form id="messageForm" action="POST">
         {{ form.hidden_tag() }}
