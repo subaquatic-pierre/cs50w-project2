@@ -14,18 +14,18 @@
             </main>
         </div>
         <div class="col-md-2 order-1">
-            <aside id="room-sidebar">
-                <ul class="list-group">  
+            <aside >
+                <ul class="list-group" id="room-list">  
                     {% for room in rooms %}
-                        <li class="list-group-item room-list">{{ room|title }}</li>
+                        <li class="list-group-item room-list">{{ room.name|title }}</li>
                     {% endfor %}                    
                 </ul>
             </aside>
         </div>
         <div class="col-md-2 order-3">
-            <aside id="user-sidebar">
-                <ul class="list-group">  
-                    {% for user in users %}
+            <aside >
+                <ul class="list-group" id="user-list">  
+                    {% for user in rooms[0].users %}
                         <li class="list-group-item user-list"><a>{{ user }}</a></li>
                     {% endfor %}                    
                 </ul>
@@ -69,17 +69,9 @@
 </div>
 
 <script type="text/javascript">
-    const username = `{{ current_user.id }}`;
-    const users = [];
-    const rooms = [];
-    
-    {% for user in rooms %}
-        rooms.push(`{{room}}`)
-    {% endfor %}
+    const username = `{{ current_user.id }}`;   
 
-    {% for room in rooms %}
-        rooms.push(`{{room}}`)
-    {% endfor %}
+    
 </script>
 
 {% endblock main %}

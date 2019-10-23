@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-    let room = 'scuba';
-    const room_users = {};
-    joinRoom('scuba');
+    let room ;
+    // Wish to join room on login form submit but cant figure it out!
+    // joinRoom('scuba'); This makes user join room on evey refresh NO GOOD!
 
     // Receive message from server
     socket.on('message', data => {
@@ -46,11 +46,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }        
     });
 
-    socket.on('room', data => {
+    // join event received from server
+    socket.on('join', data => {
+        // Show all users in room when join room
+        console.log('join room: ' + data.room + ' with users: ' + data.users)
+        updateUserList(data);       
 
-        updateUserList(data)
-
+        // if its user that left room dont print leave message to their chat
+        if (!(data.leave_room === true && data.username === username)) {
+            printSysMsg(data.msg);                    
+        }             
+    })
+    
+    // Leave event received from server
+    socket.on('leave', data => {
+        //Show all user in room when leave room
+        console.log('leave room: ' + data.room + ' with users: ' + data.users)
+        updateUserList(data);
         
+        // if its user that left room dont print leave message to their chat
         if (!(data.leave_room === true && data.username === username)) {
             printSysMsg(data.msg)                    
         }             
@@ -76,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (newRoom == room) {
                 msg = `You are already in ${room} room.`;
                 printSysMsg(msg);
-
             } else {
                 leaveRoom(room)
                 joinRoom(newRoom)
@@ -102,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#message').focus();
     };
 
+    // Print sytem messages such as already connected to the room or user connected
     function printSysMsg(msg) {
         const p = document.createElement('p');
         p.setAttribute('class', 'sys-msg');
@@ -111,27 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#message').focus();
     };
 
-    function updateUserList(data){
-        
-        
-        if (data.join_room === true) {
-            console.log('join room: ' + data.room)
-            for(let i = 0; i < users.length; i++){
-            
-                if (data.room === data.user_current_room){
-                    room_users[data].push(data.username)
-                }
-            }
-        } else if (data.leave_room === true) {
-            console.log('leave room: ' + data.room)
-            for(let i = 0; i < users.length; i++){            
-                if (data.username === users[i]){
-                    room_users.splice(i, 1)
-                }
-            }
-        }
-        console.log('room_users: ' + room_users)
+    // Update the user list on user join room or user leave room
+    function updateUserList(data){     
+        const li = document.createElement('li');
+        document.querySelector('#user-list').innerHTML = '';
+        li.setAttribute('class', 'list-group-item user-list');
+        for (let i = 0; i < data.users.length; i++) {
+            li.innerHTML = data.users[i];
+            document.querySelector('#user-list').append(li);
+        }       
     }
+
+    // On click logout user leave chat room
+    document.querySelector('#logout-btn').addEventListener('click', function() {
+        leaveRoom(room);
+    });
 
 });
 

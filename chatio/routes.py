@@ -8,60 +8,101 @@ from wtforms.validators import InputRequired
 from flask_login import UserMixin, login_user, logout_user, current_user
 from flask_socketio import send, emit, join_room, leave_room
 
+##### ROOM CLASS #####
+
+all_rooms = []
+active_users = []
+
+class Room:
+
+    def __init__(self, name):
+        self.name = name
+        self.users = []
+        all_rooms.append(self)
+
+
+    def del_room(self):
+        all_rooms.remove(self)
+
+    def del_user(self, user):
+        if user in self.users:
+            self.users.remove(user)
+
+    def add_user(self, user):
+        self.users.append(user)
+
+    def __repr__(self):
+        return f"Room:( name: {self.name}, users:{self.users} )"
+
+def find_room(room):
+    for i in all_rooms:
+        if i.name == room:
+            return i
+
+
+scuba_r = Room('scuba')
+fishes_r = Room('fishes')
+sharks_r = Room('sharks')
+dolphins_r = Room('dolphins')
+
 
 ##### SOCKET IO HANDELERS #####
 
-# All chat rooms
-ROOMS = ['scuba', 'fishes', 'sharks', 'dolphins']
-active_users = []
 
 # Message sent to server
 @socketio.on('message')
 def message(data):
-    room = data['room']
+    room = find_room(data['room'].lower())
     send({
         'msg': data['msg'], 
         'username': data['username'], 
         'time_stamp': strftime('%b-%d %I:%M%p', localtime())        
-        }, room=room)
+        }, room=room.name)
 
 
 # User joins room
 @socketio.on('join')
 def join(data):
-    room = data['room'].lower()
-    join_room(room)
-    emit('room',
+    room = find_room(data['room'].lower())
+    # add username to room
+    room.add_user(data['username'])    
+    join_room(room.name)
+    emit('join',
         {'msg': data['username'] + ' has joined ' + data['room'], 
         'username': data['username'], 
         'join_room': True,
-        'room': room,
-        'user_current_room': room
-        }, room=room)
+        'room': room.name,
+        'users': room.users
+        }, room=room.name)
 
 
 # Leave a room
 @socketio.on('leave')
 def leave(data):
-    room = data['room'].lower()
-    emit('room',
+    try:
+        room = find_room(data['room'].lower())
+        print(data)
+        # Remove username from room
+        room.del_user(data['username'])
+        emit('leave',
         {'msg': data['username'] + ' has left ' + data['room'], 
-        'room': room, 
+        'room': room.name, 
         'username': data['username'], 
-        'leave_room': True
-        }, room=room)    
-    leave_room(room)    
-
-
-
-
+        'leave_room': True,
+        'users': room.users
+        }, room=room.name)    
+        leave_room(room.name)
+    except:
+        return None
+        
+    
 
 
 ##### FORMS #####
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
-    submit = SubmitField('Login')
+    submit = SubmitField('Login', id='login-btn')
 
 
 class ChatForm(FlaskForm):
@@ -113,12 +154,16 @@ def index():
 @app.route('/chat', methods=['GET', 'POST'])
 def mainchat():
     form = ChatForm()
-    return render_template('chat.html', title='Chat', form=form, rooms=ROOMS, users=active_users)
+    return render_template('chat.html', title='Chat', form=form, rooms=all_rooms)
 
     
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    logout_user()
-    flash(f'Thank you for joining us!', 'info')
+    # User logged in and is in room, clicks log out button, or logout route
+    if current_user.id and current_user.id in active_users:
+        active_users.remove(current_user.id)
+        flash(f'Thank you for joining us!', 'info')
+    # User logged in but may not be in a room
+    logout_user()    
     return redirect(url_for('index'))
 

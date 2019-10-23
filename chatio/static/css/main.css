@@ -28,10 +28,14 @@ span {
     margin-bottom: 10px;
 }
 
-#room-sidebar {
+#room-list {
     height: 600px;
     background: #aaaaaa;
+}
 
+#user-list {
+    height: 600px;
+    background: #aaaaaa;
 }
 
 a {
