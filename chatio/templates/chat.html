@@ -6,81 +6,81 @@
 
 {% block main %}
 
-<div class="container">
+<div class="container" id="main-chat-page">
+
+    <!-- LOGIN FORM -->
+    <div class="row justify-content-center">
+        <div class="col-md-6 p-5 shadow mt-5 bg-dark text-light">
+            <form class="form" id="login-form" >
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4 pb-3">Login</legend>
+                    <div class="form-group">
+                        <label class="form-control-label" for="username">Username</label>                            
+                        <input autofocus class="form-control form-control-lg" id="username" name="username" required type="text" value="">                            
+                    </div>
+                    <div class="form-group text-center">
+                        <input class="btn btn-outline-info btn-block" id="login-btn" name="submit" type="submit" value="Login">
+                    </div>
+                </fieldset>        
+            </form>
+        </div>
+    </div>
+    <!-- END LOGIN FORM -->
+
     <div class="row my-4">
-        <div class="col-md-12">
-            {% if current_user.id == None %}
-            {% else %}
-                <a href="#" class="btn btn-outline-info" id="create-room">CREATE ROOM</a>
-                <a href="#" class="btn btn-outline-warning" id="leave-room">LEAVE ROOM</a>
-            {% endif %}
+        <div class="col-md-3">
+            <input type="text" placeholder="Room name" id="room-name" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-outline-info" id="create-room">CREATE ROOM</a>
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-outline-warning" id="leave-room">LEAVE ROOM</a>
+        </div>
+        <div class="col-md-3">
+            <a class="btn btn-outline-warning" id="logout-btn">LOGOUT</a>
         </div>
     </div>
     
     <div class="row my-5 no-gutters">
         <div class="col-md-8 order-2">
-            <main id="main-chat">
-                
+            <main id="main-chat">                
             </main>
         </div>
         <div class="col-md-2 order-1">
             <aside >
-                <ul class="list-group" id="room-list">  
-                    {% for room in rooms %}
-                        <li class="list-group-item room-list">{{ room.name|title }}</li>
-                    {% endfor %}                    
+                <ul class="list-group" id="room-list">
                 </ul>
             </aside>
         </div>
         <div class="col-md-2 order-3">
             <aside >
                 <ul class="list-group" id="user-list">  
-                    {% for user in rooms[0].users %}
-                        <li class="list-group-item user-list">{{ user }}</li>
-                    {% endfor %}                    
                 </ul>
             </aside>
         </div>
     </div>    
     
-    <form id="messageForm" action="POST">
-        {{ form.hidden_tag() }}
+    <form id="messageForm">
         <div class="form-row">
             <div class="col-md-10">
-                <div class="form-group">
-                    {% if form.message.errors %}
-                        {{ form.message(class='form-control form-control-lg is-invalid') }}
-                        <div class="invalid-feedback">
-                            {% for error in errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.message(class='form-control form-control-lg' , autocomplete='off', autofocus=true) }}
-                    {% endif %}
+                <div class="form-group">                    
+                    <input autocomplete="off" autofocus class="form-control form-control-lg" id="message" name="message" type="text" value="">                    
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
-                    {{ form.submit(class='btn btn-success btn-lg btn-block') }}
+                    <input class="btn btn-success btn-lg btn-block" id="submit" name="submit" type="submit" value="Send">
                 </div>
             </div>
         </div>
-        
-    </form>
-
-        <p>
             
-        </p>
-    
-    
-    
+    </form>      
 </div>
 
-<script type="text/javascript">
-    const username = `{{ current_user.id }}`;   
-
-    
+<script>
+    all_rooms = `{{ rooms }}`
 </script>
+
 
 {% endblock main %}

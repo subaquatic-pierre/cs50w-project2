@@ -16,6 +16,7 @@ body {
     height: 600px;
     background:#eee;
     padding: 15px;
+    overflow:auto;
 }
 
 p {

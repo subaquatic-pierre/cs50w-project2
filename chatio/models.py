@@ -1,10 +1,9 @@
 from chatio.routes import all_rooms
-from flask_login import UserMixin, login_user, logout_user, current_user
-from chatio import login_manager, all_rooms, active_users
+from chatio import all_rooms, active_users
 
 ##### MODELS #####
 
-class User(UserMixin):
+class User:
     pass
 
 class Room:
@@ -12,7 +11,14 @@ class Room:
     def __init__(self, name):
         self.name = name
         self.users = []
+        self.all_msgs = []
         all_rooms.append(self)
+
+    def add_msg(self, msg, user, time):
+        if len(self.all_msgs) == 100:
+            self.all_msgs.remove(self.all_msgs[0])
+        self.all_msgs.append({'msg':msg, 'username':user, 'time':time})
+            
 
     def del_room(self):
         if self in all_rooms:
@@ -26,7 +32,7 @@ class Room:
         self.users.append(user)
 
     def __repr__(self):
-        return f"Room:( name: {self.name}, users:{self.users} )"
+        return f"Room:( name: {self.name}, users:{self.users})"
 
 ##### UTILS #####
 
@@ -42,16 +48,13 @@ sharks_r = Room('sharks')
 dolphins_r = Room('dolphins')
 turtles_r = Room('turtles')
 
-# Login manager decorator paths
-@login_manager.user_loader
-def user_loader(username):
-    user = User()
-    user.id = username
-    return user
+# Create dummy messages
+
+for i in range(1, 4):    
+    scuba_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
+    fishes_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
+    sharks_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
+    dolphins_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
+    turtles_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
 
 
-@login_manager.request_loader
-def request_loader(request):
-    user = User()
-    user.id = request.form.get('username')
-    return user

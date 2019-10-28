@@ -17,20 +17,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse " id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('mainchat') }}">Chat</a>
-                </li>
-                {% if current_user.id == None %}
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" id="logout-btn" href="{{ url_for('logout') }}">{{ current_user.id }}</a>
-                    </li>
-                {% endif %}
-                
+                <ul class="navbar-nav ml-auto">           
     
                 </ul>
             </div>
