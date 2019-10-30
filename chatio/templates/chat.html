@@ -8,14 +8,92 @@
 
 <div class="container" id="main-chat-page">
 
+    <!-- LOGIN FORM TEMPLATE DIV -->
+    <div id="login-div"></div>    
+
+    <!-- MAIN CHAT HEADINGS -->
+    <div class="row mt-5 mb-0 text-center no-gutters bg-dark py-2 text-light">
+        <div id="rooms-heading" class="col-md-2 border-right">
+            <h4>Rooms</h4>
+        </div>
+        <div id="main-chat-heading" class="col-md-8">
+            <h4>Main Chat</h4>
+        </div>
+        <div id="users-heading" class="col-md-2 border-left">
+            <h4>Users</h4>
+        </div>
+    </div>
+
+    <!-- MAIN VHAT AREA -->
+    <div class="row no-gutters">
+        <div class="col-md-8 order-2">
+            <main id="main-chat">                
+            </main>
+        </div>
+        <div class="col-md-2 order-1 bg-dark">
+            <aside >
+                <ul class="list-group" id="room-list">
+                </ul>
+            </aside>
+        </div>
+        <div class="col-md-2 order-3 bg-dark">
+            <aside >
+                <ul class="list-group" id="user-list">  
+                </ul>
+            </aside>
+        </div>
+    </div>    
+    <div class="row no-gutters">
+        <div class="col-md-2 bg-dark">
+            
+        </div>
+        <div class="col-md-8">
+            <form id="messageForm" class="form-row no-gutters">
+                <div class="col-md-10" id="messageFormInput">
+                    <div class="input-group mb-3" id="username-input-group">
+                        <input autocomplete="off" class="form-control form-control-lg" id="message" name="message" type="text" value="">                    
+                    </div>                   
+                </div>
+                <div class="col-md-2" id="sub-btn">
+                    <div class="form-group" id="form-grp">
+                        <input class="btn btn-success btn-lg btn-block" id="submit" name="submit" type="submit" value="Send">
+                    </div>
+                </div>
+            </form>           
+        </div>
+        <div class="col-md-2 bg-dark">
+            
+        </div>
+    
+    </div>
+
+    <!-- USER CONTROLS FORM TEMPLATE DIV -->
+    <div id="user-controls"></div>
+
+    
+</div>
+
+<script>
+    all_rooms = `{{ rooms }}`;
+    console.log(all_rooms)
+    let tmproom = []
+    for (let i = 0; i < all_rooms.length; i++) {
+        tmproom.push(all_rooms[i])
+    }
+    console.log(tmproom);
+</script>
+
+<!-- HANDLEBAR TEMPLATES -->
+
+<script id="login-form-template" type="text/x-handlebars-template">
     <!-- LOGIN FORM -->
-    <div class="row justify-content-center">
-        <div class="col-md-6 p-5 shadow mt-5 bg-dark text-light">
+    <div id="login-div-template" class="row justify-content-center">
+        <div class="col-md-6 p-5 shadow mt-5 mb-3 bg-dark text-light">
             <form class="form" id="login-form" >
                 <fieldset class="form-group">
                     <legend class="border-bottom mb-4 pb-3">Login</legend>
                     <div class="form-group">
-                        <label class="form-control-label" for="username">Username</label>                            
+                        <label class="form-control-label" for="username" autocomplete="off">Username</label>                            
                         <input autofocus class="form-control form-control-lg" id="username" name="username" required type="text" value="">                            
                     </div>
                     <div class="form-group text-center">
@@ -25,62 +103,49 @@
             </form>
         </div>
     </div>
-    <!-- END LOGIN FORM -->
+    <!-- END LOGIN FORM -->  
+    {% raw -%} 
+</script>
 
-    <div class="row my-4">
-        <div class="col-md-3">
-            <input type="text" placeholder="Room name" id="room-name" class="form-control">
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-outline-info" id="create-room">CREATE ROOM</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-outline-warning" id="leave-room">LEAVE ROOM</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-outline-warning" id="logout-btn">LOGOUT</a>
-        </div>
-    </div>
-    
-    <div class="row my-5 no-gutters">
-        <div class="col-md-8 order-2">
-            <main id="main-chat">                
-            </main>
-        </div>
-        <div class="col-md-2 order-1">
-            <aside >
-                <ul class="list-group" id="room-list">
-                </ul>
-            </aside>
-        </div>
-        <div class="col-md-2 order-3">
-            <aside >
-                <ul class="list-group" id="user-list">  
-                </ul>
-            </aside>
-        </div>
-    </div>    
-    
-    <form id="messageForm">
-        <div class="form-row">
-            <div class="col-md-10">
-                <div class="form-group">                    
-                    <input autocomplete="off" autofocus class="form-control form-control-lg" id="message" name="message" type="text" value="">                    
-                </div>
+<script id="user-controls-template" type="text/x-handlebars-template">
+    <!-- USER CONTROLS -->
+    <div id="user-controls-section">         
+            <hr class="mt-5"> 
+        <div class="row mb-5">
+                  
+            <div class="col-md-3">
+                <input type="text" placeholder="Room name" id="room-name" autocomplete="off" class="form-control">
+                <button href="#" class="btn btn-outline-success mt-3 btn-block" id="create-room">CREATE ROOM</button>
+            </div>
+            <div class="col-md-5">
+                <h4 id="username-p"><small>Username: </small>{{ username }}</h4>
+                <h4><small>Current Room: </small><span id="current-room">Larry</span></h4>
             </div>
             <div class="col-md-2">
-                <div class="form-group">
-                    <input class="btn btn-success btn-lg btn-block" id="submit" name="submit" type="submit" value="Send">
-                </div>
+                <a href="#" class="btn btn-outline-warning btn-block" id="leave-room">LEAVE ROOM</a>
             </div>
-        </div>
-            
-    </form>      
-</div>
-
-<script>
-    all_rooms = `{{ rooms }}`
+            <div class="col-md-2">
+                <a href="#" class="btn btn-outline-warning btn-block" id="logout-btn">LOGOUT</a>
+            </div>
+        </div>                
+    </div>
 </script>
+
+<script id="chat-msg-script" type="text/x-handlebars-template">
+    <div class="{{ msg-class }}">
+        <p class="{{ name-class }}">@{{ username }} :</p>
+        <p class="time">{{ time }}</p>
+        <p class="msg">{{msg}}</p>
+    </div>
+</script>
+
+<script id="username-input-template" type="text/x-handlebars-template">
+    <div class="input-group-prepend" id="input-username">
+        <span class="input-group-text" id="username-chat">@{{ username }} : </span>
+    </div>
+    <input autocomplete="off" class="form-control form-control-lg" id="message" name="message" type="text" value="">
+</script>
+{% endraw %}
 
 
 {% endblock main %}

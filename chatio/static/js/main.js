@@ -1,66 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    loginFormTemplate = Handlebars.compile(document.querySelector('#login-form-template').innerHTML);
+    userControlsTemplate = Handlebars.compile(document.querySelector('#user-controls-template').innerHTML);
+    userNameInputTemplate = Handlebars.compile(document.querySelector('#username-input-template').innerHTML);
+    msgTemplate = Handlebars.compile(document.querySelector('#chat-msg-script').innerHTML);
+
     
     onPageLoadListenerEvents();
 
     const chatDiv = document.querySelector('#main-chat');
-    let username, room, all_rooms;
+    let username, room;
     let active_users = [];
+    let all_rooms = [];
 
-    // // Login user if local storage has username
-    // if (localStorage.getItem('localUsername')){
-    //     if (localStorage.getItem('localRoom')) {
-    //         username = localStorage.getItem('localUsername');
-    //         room = localStorage.getItem('localRoom');
-    //         joinRoom(room);
-    //     } else {            
-    //         room = 'scuba';
-    //         joinRoom(room);
-    //     }
-    // } else {
-    //     // Join room on user login form submit
-    //     document.querySelector('#login-form').onsubmit = e => {
-    //     e.preventDefault();
-    //     formusername = document.querySelector('#username').value
-    //     localStorage.setItem('localUsername', formusername)
-    //     // Check if room in local storage
-    //     if (localStorage.getItem('localRoom')) {
-    //         room = localStorage.getItem('localRoom');
-    //     } else {
-    //         room = 'scuba';
-    //     }
-    //         socket.emit('login', {'username': formusername, 'room': room})
-    //     }
-    // }
+    // Login user if local storage has username
+    if (localStorage.getItem('localUsername')){
+        // Add user controls as user is logged in
+        username = localStorage.getItem('localUsername');
+        document.querySelector('#user-controls').innerHTML = userControlsTemplate({username:username});
+        userControlListeners();
+        document.querySelector('#username-input-group').innerHTML = userNameInputTemplate({username:username});
+        if (localStorage.getItem('localRoom')) {
+            room = localStorage.getItem('localRoom');
+        } else {            
+            room = 'scuba';
+        }
+        socket.emit('login', {'username': username, 'room': room});
+    } else {
+        document.querySelector('#login-div').innerHTML = loginFormTemplate();
+        loginFormListeners();
+    }
 
     // ===== SOCKETIO EVENTS FROM SERVER =====
 
     // Receive message from server
     socket.on('message', data => {        
         if (data.msg) {
-            console.log(`MESSAGE RECEIVED, username: ${data.username}, room: ${data.room}`);
-            const p = document.createElement('p');
-            const br = document.createElement('br');        
-            const username_span = document.createElement('span');
-            const time_span = document.createElement('span');            
+            let msgClass, nameClass, msgDivClass;
             // Check if user message or other message and assing CSS classes
-            if (data.username == username) {
-                p.setAttribute('class', 'my-msg')
-                username_span.setAttribute('class', 'my-name')
+            if (data.username === username) {
+                msgClass = 'my-msg';
+                nameClass = 'my-name';
+                msgDivClass = 'my-msg-div';
             } else {
-                p.setAttribute('class', 'other-msg')
-                username_span.setAttribute('class', 'other-name')
+                msgClass = 'other-msg';
+                nameClass = 'other-name';
+                msgDivClass = 'other-msg-div';
             }
             // Check if leave room or join room message, Dont send has left message to user 
-            if (!(data.leave_room == true || data.join_room == true)) {
-                // Assign values from server data
-                time_span.innerHTML = data.time_stamp;
-                username_span.innerHTML = data.username;
-                // Build p element to append to main chat div
-                p.innerHTML = username_span.outerHTML + ':' + br.outerHTML + data.msg + br.outerHTML + time_span.outerHTML;
-                // Append p element ti div
-                chatDiv.append(p);
+            if (!(data.leave_room === true || data.join_room === true)) {
+                context = {'msg-class': msgClass, 'name-class': nameClass, 'time': data.time_stamp, 'msg': data.msg,'username': data.username}                         
+                msgDiv = document.createElement('div')
+                msgDiv.setAttribute('class', msgDivClass)
+                msgDiv.innerHTML = msgTemplate(context)
+                chatDiv.append(msgDiv);
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }     
         } else {
@@ -76,15 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateRoomList(data['rooms']);
         printSysMsg(data.msg);            
         active_users = data['users'];
+        all_rooms = data['rooms'];
         console.log(active_users);
         username = data.username;  
+        document.querySelector('#current-room').innerHTML = data.room.charAt(0).toUpperCase() + room.slice(1);
         localStorage.setItem('localUsername', username);
         localStorage.setItem('localRoom', data['room']);     
     });
 
     // join event received from server
     socket.on('join', data => {
-        console.log(`JOIN RECEIVED, username: ${data.username}, room: ${data.room}`)
+        console.log(`JOIN RECEIVED, username: ${data.username}, room: ${data.room}`);
         updateUserList(data);
         if (data.username === username) {
             updateMessages(data);
@@ -92,45 +88,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         printSysMsg(data.msg);        
         leave_room = false;       
-        localStorage.setItem('localRoom', data['room']);     
+        all_rooms = data['rooms'];
+        // Set current room text in user control div
+        document.querySelector('#current-room').innerHTML = data.room.charAt(0).toUpperCase() + room.slice(1);
+        localStorage.setItem('localRoom', data['room']);
     });
     
     // Leave event received from server
     socket.on('leave', data => {
-        console.log(`LEAVE RECEIVED, username: ${data.username}, room: ${data.room}`)
+        console.log(`LEAVE RECEIVED, username: ${data.username}, room: ${data.room}`);
         // update user list for that  room
         document.querySelector('#user-list').innerHTML = '';
         updateUserList(data);
         printSysMsg(data.msg);
         leave_room = true;
+        all_rooms = data['rooms'];
         localStorage.removeItem('localRoom');
+        document.querySelector('#current-room').innerHTML = '';
     });
 
     // Create room event receive from server
     socket.on('create', data => {
-        console.log(`CREATE RECEIVED, username: ${data.username}, room: ${data.room}`)
+        console.log(`CREATE RECEIVED, username: ${data.username}, room: ${data.room}`);
         // of same user as created room then user join room
         if (data.username == username){
             room = data.room;
             joinRoom(data.room);
             updateUserList(data);
         }
-        updateRoomList(data['rooms']);   
+        updateRoomList(data['rooms']);  
+        all_rooms = data['rooms']; 
     });
 
     // Leave event received from server
     socket.on('logout', data => {
-        console.log(`LOGOUT RECEIVED`)
         // update user list for that  room
-        document.querySelector('#main-chat').innerHTML = '';
-        document.querySelector('#room-list').innerHTML = '';
-        document.querySelector('#user-list').innerHTML = '';
-        printSysMsg(data.msg);
-        leave_room = true;
-        active_users = data['users'];
-        localStorage.removeItem('localRoom')
-        localStorage.removeItem('localUsername')
-    })
+        if (data.username === username) {
+            console.log(`LOGOUT RECEIVED`);
+            document.querySelector('#main-chat').innerHTML = '';
+            document.querySelector('#room-list').innerHTML = '';
+            document.querySelector('#user-list').innerHTML = '';
+            printSysMsg(data.msg);
+            leave_room = true;
+            active_users = data['users'];
+            localStorage.removeItem('localRoom');
+            localStorage.removeItem('localUsername');
+        } else {
+            console.log(`LOGOUT RECEIVED`);
+            printSysMsg(data.msg);
+        }
+        document.querySelector('#username').focus();
+    });
 
     // Private message when click on username
     // document.querySelectorAll('.user-list').forEach(li => {
@@ -231,7 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // add listener event to all rooms in the list
         document.querySelectorAll('.room-list').forEach(li => {
             li.onclick = () => {
-                let newRoom = li.innerHTML;
+                let newRoom = li.innerHTML.toLowerCase();
+                console.log(`NEW ROOM CLICK: ${newRoom}`)
+                console.log(`ROOM: ${room}`)
                 if (newRoom == room) {
                     msg = `You are already in ${room} room.`;
                     printSysMsg(msg);
@@ -249,55 +259,32 @@ document.addEventListener('DOMContentLoaded', () => {
         chatDiv.innerHTML = '';
         if (data.all_msgs) {
             for (var i = 0; i < data.all_msgs.length; i++) {
-                const p = document.createElement('p');
-                const br = document.createElement('br');        
-                const username_span = document.createElement('span');
-                const time_span = document.createElement('span');                           
+                let msgClass, nameClass, msgDivClass;
                 // Check if user message or other message and assing CSS classes
-                if (data.all_msgs[i].username == username) {
-                    p.setAttribute('class', 'my-msg');
-                    username_span.setAttribute('class', 'my-name');
+                if (data.all_msgs[i].username === username) {
+                    msgClass = 'my-msg';
+                    nameClass = 'my-name';
+                    msgDivClass = 'my-msg-div';
                 } else {
-                    p.setAttribute('class', 'other-msg');
-                    username_span.setAttribute('class', 'other-name');
-                }    
-                time_span.innerHTML = data.all_msgs[i].time;
-                username_span.innerHTML = data.all_msgs[i].username;
-                // Build p element to append to main chat div
-                p.innerHTML = username_span.outerHTML + ':' + br.outerHTML + data.all_msgs[i].msg + br.outerHTML + time_span.outerHTML;
-                // Append p element ti div
-                chatDiv.append(p);
+                    msgClass = 'other-msg';
+                    nameClass = 'other-name';
+                    msgDivClass = 'other-msg-div';
+
+                }
+                context = {'msg-class': msgClass, 'name-class': nameClass, 'time': data.all_msgs[i].time, 'msg': data.all_msgs[i].msg,'username': data.all_msgs[i].username}                         
+                msgDiv = document.createElement('div')
+                msgDiv.setAttribute('class', msgDivClass)
+                msgDiv.innerHTML = msgTemplate(context)
+                chatDiv.append(msgDiv);
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             };
         };
     };
 
+
     // ===== LISTENR EVENTS ONPAGE LOAD =====
 
-    function onPageLoadListenerEvents() {
-
-        // Log out button click
-        document.querySelector('#logout-btn').onclick = () => {
-            console.log('Logout Button: ' + username);
-            console.log('Active Users: ', active_users);
-            // check user is logged in
-            for (var i = 0; i < active_users.length; i++) {
-                if (username === active_users[i]){
-                socket.emit('logout', {'username': username, 'room': room});
-                break;
-                };
-            };
-            msg = 'You need to be logged in for that';
-            printSysMsg(msg);
-        };
-
-        // Join room on user login form submit
-        document.querySelector('#login-form').onsubmit = e => {
-            e.preventDefault();
-            username = document.querySelector('#username').value;
-            room = 'scuba';
-            socket.emit('login', {'username': username, 'room': room})
-        }
+    function onPageLoadListenerEvents() {        
 
         // Send message to server on message form submit
         document.querySelector('#messageForm').addEventListener('submit', e => {
@@ -321,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // add listener event to allrooms in the list
         document.querySelectorAll('.room-list').forEach(li => {
             li.onclick = () => {
-                let newRoom = li.innerHTML;
+                let newRoom = li.innerHTML.toLowerCase();
                 if (newRoom == room) {
                     msg = `You are already in ${room} room.`;
                     printSysMsg(msg);
@@ -331,6 +318,49 @@ document.addEventListener('DOMContentLoaded', () => {
                     room = newRoom;
                 }
             }
+        });       
+    };
+
+
+    // ===== LISTENER EVENTS FOR USER CONTROLS =====
+
+    function userControlListeners() {
+
+        // Create room button click
+        document.querySelector('#create-room').addEventListener('click', function() {
+            let room_exists = false;
+            // Make sure user is active
+            for (var i = 0; i < active_users.length; i++) {
+                if (username === active_users[i]){
+                //check string in field
+                    if (!document.querySelector('#room-name').value == '') {    
+                        for (let el of all_rooms) {
+                            if (el === document.querySelector('#room-name').value.toLowerCase() ) {
+                                alert('Room already exists');
+                                document.querySelector('#room-name').value = '';
+                                return room_exists = true;
+                            };
+                        };
+                        if (!room_exists){
+                            leaveRoom(room);
+                            createRoom(document.querySelector('#room-name').value);
+                            document.querySelector('#room-name').value = '';
+                        }
+                    } else { // alert room needs a name
+                        alert('Room must have a name');
+                        not_room = true;
+                        break;
+                    };                    
+                    msg = 'You need to be logged in for that';
+                    printSysMsg(msg);
+                };
+            };            
+        });
+
+        document.querySelector('#room-name').addEventListener('keyup', e => {
+            if (e.keyCode === 13) {
+                document.querySelector('#create-room').click();
+            };
         });
 
         // Leave room button click
@@ -339,24 +369,47 @@ document.addEventListener('DOMContentLoaded', () => {
             room = undefined;
         });
 
-        // Create room button click
-        document.querySelector('#create-room').addEventListener('click', function() {
-            // Make sure user is active
+        // Log out button click
+        document.querySelector('#logout-btn').onclick = () => {
+            // Remove user controls if user log out button click
+            document.querySelector('#user-controls-section').remove();
+            // Add login form if user hits logout button
+            document.querySelector('#login-div').innerHTML = loginFormTemplate();
+            // Remove username from input field
+            document.querySelector('#username-input-group').innerHTML = '<input autocomplete="off" autofocus class="form-control form-control-lg" id="message" name="message" type="text" value="">';
+            loginFormListeners();    
+            console.log('Logout Button: ' + username);
+            console.log('Active Users: ', active_users);
+            // check user is logged in
             for (var i = 0; i < active_users.length; i++) {
                 if (username === active_users[i]){
-                //check string in field
-                    if (!document.querySelector('#room-name').value == '') {              
-                        leaveRoom(room);
-                        createRoom(document.querySelector('#room-name').value);
-                    } else { // alert room needs a name
-                        alert('Room must have a name');
-                    };
-                    break;
+                socket.emit('logout', {'username': username, 'room': room});
+                break;
                 };
-            }
-            msg = 'You need to be logged in for that';
-            printSysMsg(msg);
-        });
+                msg = 'You need to be logged in for that';
+                printSysMsg(msg);    
+            };
+        };      
     };
-    
+
+
+    // ===== LISTENER EVENTS FOR LOGIN FORM =====
+
+    // Join room on user login form submit
+    function loginFormListeners() {
+        document.querySelector('#login-form').onsubmit = e => {
+            e.preventDefault();
+            username = document.querySelector('#username').value;
+            document.querySelector('#username').value = '';
+            room = 'scuba';
+            // Remove login form on login
+            document.querySelector('#login-div-template').remove();
+            // Add user controls on login
+            document.querySelector('#user-controls').innerHTML = userControlsTemplate({username:username});
+            userControlListeners();
+            document.querySelector('#username-input-group').innerHTML = userNameInputTemplate({username:username});
+            socket.emit('login', {'username': username, 'room': room});
+        };
+    };
+
 });

@@ -1,5 +1,5 @@
 body {
-    
+    line-height: 1;
 }
 
 * {
@@ -7,9 +7,37 @@ body {
     margin: 0;
 }
 
-.list-group-item {
-    border-radius: 0!important;
-    cursor: pointer;
+#username-input-group {
+    margin-bottom: 0px!important;
+}
+
+#form-grp {
+    margin-bottom: 0px!important;
+}
+
+#username-chat {
+    border-radius: 0px!important;
+}
+
+#submit {
+    border-radius: 0px!important;
+}
+
+#message {
+    border-radius: 0px!important;
+}
+#messageFormInput {
+    padding-right: 0px!important;
+}
+
+#sub-btn {
+    padding-left: 0px!important;
+}
+
+#message:focus{
+    outline: none!important;
+    box-shadow: none;
+    border: 1px solid #ced4da;
 }
 
 #main-chat {
@@ -31,12 +59,12 @@ span {
 
 #room-list {
     height: 600px;
-    background: #aaaaaa;
+    overflow-y: auto;
 }
 
 #user-list {
     height: 600px;
-    background: #aaaaaa;
+    overflow-y: auto;
 }
 
 a {
@@ -52,5 +80,66 @@ a {
 
 .navbar-brand {
     font-size: 24px;
+}
+
+.list-group-item {
+    border-radius: 0!important;
+    cursor: pointer;
+}
+
+.my-msg {
+    font-size: 18px;
+    padding: 10px 14px;
+    color: white;
+    background-color: rgb(68, 141, 117);
+    border-radius:5px;
+    margin-bottom: 18px;
 
 }
+
+.my-name {
+    font-size: 16px;
+    color: rgb(212, 212, 212);
+}
+
+.other-msg {
+    font-size: 18px;
+    padding: 10px 14px;
+    color: white;
+    text-align: end;
+    background-color: rgb(101, 91, 231);
+    border-radius:5px;
+    margin-bottom: 18px;
+
+}
+
+.other-name {
+    font-size: 16px;
+    color: rgb(212, 212, 212);
+}
+
+.time {
+    color: rgb(212, 212, 212);
+    font-size: 11px;
+    line-height: .8;
+}
+
+.other-msg-div {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.my-msg-div {
+    display: flex;
+    justify-content: flex-start;
+}
+
+p {
+    line-height: 1.5;
+    margin: 0;
+}
+
+.sys-msg {
+    margin-bottom: 18px;
+}
+

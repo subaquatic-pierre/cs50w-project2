@@ -2,7 +2,7 @@ from time import localtime, strftime
 import time
 import string
 from chatio import app, socketio, all_rooms, active_users
-from flask import render_template
+from flask import render_template, jsonify
 from flask_socketio import send, emit, join_room, leave_room
 from chatio.models import *
 
@@ -11,7 +11,7 @@ from chatio.models import *
 
 @app.route('/', methods=['GET'])
 def mainchat():
-    return render_template('chat.html', title='Chat', rooms=all_rooms)
+    return render_template('chat.html', title='Chat')
 
     
 ##### SOCKET IO HANDELERS #####
@@ -23,13 +23,14 @@ def login(data):
     user = User()
     user.id = data['username']
     active_users.add(user.id)
+    join_room(room.name)
+
     # add username to room if not already in room
     if user.id not in room.users:
-        room.add_user(user.id)   
-        join_room(room.name)  
+        room.add_user(user.id)
     
     emit('login',
-        {'msg': data['username'] + ' has joined room - ' + data['room'], 
+        {'msg': data['username'] + ' has joined room - ' + data['room'].capitalize(), 
         'username': data['username'], 
         'join_room': True,
         'room': room.name,
@@ -68,7 +69,7 @@ def join(data):
         room.add_user(data['username'])    
         join_room(room.name)    
     emit('join',
-        {'msg': data['username'] + ' has joined room - ' + data['room'], 
+        {'msg': data['username'] + ' has joined room - ' + data['room'].capitalize(), 
         'username': data['username'], 
         'join_room': True,
         'room': room.name,
@@ -90,7 +91,7 @@ def leave(data):
     # Remove username from room
     room.del_user(data['username'])         
     emit('leave',
-    {'msg': data['username'] + ' has left room - ' + data['room'],
+    {'msg': data['username'] + ' has left room - ' + data['room'].capitalize(),
     'room': room.name, 
     'username': data['username'], 
     'leave_room': True,
@@ -106,7 +107,7 @@ def leave(data):
 
 # Leave a room receive from client
 @socketio.on('logout')
-def leave(data):
+def leave(data):    
     # If try not work user is not in room
     try:
         if data['room']:
@@ -115,12 +116,13 @@ def leave(data):
             # Remove username from room
             room.del_user(data['username'])
     except:
-        None
-    
+        print('User not in any room');
+
     active_users.remove(data['username'])    
     emit('logout',
     {'msg': data['username'] + ' has logged out! ',
     'users': list(active_users),
+    'username': data['username'],
     })       
     print('\n\nOn LOGOUT Event:')
     print('From Client:', data, '\nRoom details:')
@@ -134,7 +136,7 @@ def create(data):
     roomname = (f"{data['room']}_r").lower()
     roomname = Room((data['room']).lower())
     emit('create', 
-        {'msg': data['username'] + ' has created room - ' + data['room'], 
+        {'msg': data['username'] + ' has created room - ' + data['room'].capitalize(), 
         'username': data['username'],
         'join_room': True,
         'room':roomname.name, 
