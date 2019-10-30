@@ -1,7 +1,7 @@
 # CS50W Project 2 - Chat I/O
 
-AWS Hosted Project: 3.133.164.139
-Served with NGINX and Gunicorn
+- AWS Hosted Project: <3.133.164.139>
+- Served with NGINX and Gunicorn
 
 ## Overview
 
