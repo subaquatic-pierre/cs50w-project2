@@ -72,10 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         active_users = data['users'];
         all_rooms = data['rooms'];
         console.log(active_users);
-        username = data.username;  
-        document.querySelector('#current-room').innerHTML = data.room.charAt(0).toUpperCase() + room.slice(1);
-        localStorage.setItem('localUsername', username);
-        localStorage.setItem('localRoom', data['room']);     
+        if (data.username === username) {
+            document.querySelector('#current-room').innerHTML = data.room.charAt(0).toUpperCase() + room.slice(1);
+            localStorage.setItem('localUsername', username);
+            localStorage.setItem('localRoom', data['room']);     
+            username = data.username;
+        }
     });
 
     // join event received from server

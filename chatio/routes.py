@@ -108,7 +108,13 @@ def leave(data):
 # Leave a room receive from client
 @socketio.on('logout')
 def leave(data):    
-    # If try not work user is not in room
+    active_users.remove(data['username'])    
+    emit('logout',
+    {'msg': data['username'] + ' has logged out! ',
+    'users': list(active_users),
+    'username': data['username'],
+    }, room=data['room'])
+        # If try not work user is not in room
     try:
         if data['room']:
             room = find_room(data['room'].lower())
@@ -117,13 +123,7 @@ def leave(data):
             room.del_user(data['username'])
     except:
         print('User not in any room');
-
-    active_users.remove(data['username'])    
-    emit('logout',
-    {'msg': data['username'] + ' has logged out! ',
-    'users': list(active_users),
-    'username': data['username'],
-    })       
+        
     print('\n\nOn LOGOUT Event:')
     print('From Client:', data, '\nRoom details:')
     room_log()
