@@ -48,5 +48,3 @@ sharks_r = Room('sharks')
 dolphins_r = Room('dolphins')
 turtles_r = Room('turtles')
 
-
-
