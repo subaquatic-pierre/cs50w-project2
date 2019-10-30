@@ -64,14 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // login event received from server
     socket.on('login', data => {
-        console.log(`LOGIN RECEIVED, username: ${data.username}, room: ${data.room}`);
         updateUserList(data);  
         updateMessages(data);
         updateRoomList(data['rooms']);
         printSysMsg(data.msg);            
         active_users = data['users'];
         all_rooms = data['rooms'];
-        console.log(active_users);
         if (data.username === username) {
             document.querySelector('#current-room').innerHTML = data.room.charAt(0).toUpperCase() + room.slice(1);
             localStorage.setItem('localUsername', username);
@@ -82,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // join event received from server
     socket.on('join', data => {
-        console.log(`JOIN RECEIVED, username: ${data.username}, room: ${data.room}`);
         updateUserList(data);
         if (data.username === username) {
             updateMessages(data);
@@ -98,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Leave event received from server
     socket.on('leave', data => {
-        console.log(`LEAVE RECEIVED, username: ${data.username}, room: ${data.room}`);
         // update user list for that  room
         document.querySelector('#user-list').innerHTML = '';
         updateUserList(data);
@@ -111,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create room event receive from server
     socket.on('create', data => {
-        console.log(`CREATE RECEIVED, username: ${data.username}, room: ${data.room}`);
         // of same user as created room then user join room
         if (data.username == username){
             room = data.room;
@@ -126,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('logout', data => {
         // update user list for that  room
         if (data.username === username) {
-            console.log(`LOGOUT RECEIVED`);
             document.querySelector('#main-chat').innerHTML = '';
             document.querySelector('#room-list').innerHTML = '';
             document.querySelector('#user-list').innerHTML = '';
@@ -136,30 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('localRoom');
             localStorage.removeItem('localUsername');
         } else {
-            console.log(`LOGOUT RECEIVED`);
             printSysMsg(data.msg);
         }
         document.querySelector('#username').focus();
     });
-
-    // Private message when click on username
-    // document.querySelectorAll('.user-list').forEach(li => {
-    //     li.onclick = () => {
-    //         let newRoom = li.innerHTML;
-    //         if (newRoom == room) {
-    //             msg = `You are already in ${room} room.`;
-    //             printSysMsg(msg);
-    //         } else {
-    //             createRoom(newRoom)
-    //             if (room != undefined){
-    //                 leaveRoom(room)
-    //             }                
-    //             joinRoom(newRoom)
-    //             room = newRoom;
-    //         }
-    //     }
-    // });
-
 
 
     // ===== ROOM FUNCTIONS =====
@@ -242,8 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.room-list').forEach(li => {
             li.onclick = () => {
                 let newRoom = li.innerHTML.toLowerCase();
-                console.log(`NEW ROOM CLICK: ${newRoom}`)
-                console.log(`ROOM: ${room}`)
                 if (newRoom == room) {
                     msg = `You are already in ${room} room.`;
                     printSysMsg(msg);
@@ -380,8 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove username from input field
             document.querySelector('#username-input-group').innerHTML = '<input autocomplete="off" autofocus class="form-control form-control-lg" id="message" name="message" type="text" value="">';
             loginFormListeners();    
-            console.log('Logout Button: ' + username);
-            console.log('Active Users: ', active_users);
             // check user is logged in
             for (var i = 0; i < active_users.length; i++) {
                 if (username === active_users[i]){

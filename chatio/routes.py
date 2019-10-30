@@ -39,10 +39,6 @@ def login(data):
         'users': list(active_users),
         'all_msgs': room.all_msgs
         }, room=room.name)
-    print('\n\nLogin Event:')
-    print('From Client:', data, '\nRoom details:')
-    print(room)
-    print('\n\nACTIVE USERS: ', active_users)
 
 
 # Message sent to server
@@ -56,8 +52,6 @@ def message(data):
         'username': data['username'], 
         'time_stamp': strftime('%b-%d %I:%M%p', localtime())        
         }, room=room.name)
-    print('\n\nOn Message Event:')
-    print(room)
 
 
 # User joins room
@@ -77,11 +71,6 @@ def join(data):
         'rooms': [room.name for room in all_rooms],
         'all_msgs': room.all_msgs
         }, room=room.name)
-    print('\n\nOn Join Event:')
-    print('From Client:', data, '\nRoom details:')
-    room_log()
-    print('\n\nACTIVE USERS: ', active_users)
-
 
 
 # Leave a room receive from client
@@ -99,10 +88,6 @@ def leave(data):
     'rooms': [room.name for room in all_rooms],
     }, room=room.name)       
     leave_room(room.name)     
-    print('\n\nOn Leave Event:')
-    print('From Client:', data, '\nRoom details:')
-    room_log()
-    print('\n\nACTIVE USERS: ', active_users)
 
 
 # Leave a room receive from client
@@ -123,11 +108,6 @@ def leave(data):
             room.del_user(data['username'])
     except:
         print('User not in any room');
-        
-    print('\n\nOn LOGOUT Event:')
-    print('From Client:', data, '\nRoom details:')
-    room_log()
-    print('\n\nACTIVE USERS: ', active_users)
 
 
 # Create room on receive create room event from client
@@ -143,12 +123,3 @@ def create(data):
         'users':roomname.users,
         'rooms': [room.name for room in all_rooms],
         }, broadcast=True)
-    print('\n\nOn Create Event:')
-    print('From Client:', data, '\nRoom details:')
-    room_log()
-
-
-
-def room_log():
-    for room in all_rooms:
-        print(room)

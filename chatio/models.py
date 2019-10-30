@@ -48,13 +48,5 @@ sharks_r = Room('sharks')
 dolphins_r = Room('dolphins')
 turtles_r = Room('turtles')
 
-# Create dummy messages
-
-for i in range(1, 4):    
-    scuba_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
-    fishes_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
-    sharks_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
-    dolphins_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
-    turtles_r.add_msg(f'This is a message {i}', f'the user {i}',f'the time {i}')
 
 
