@@ -1,8 +1,5 @@
 # CS50W Project 2 - Chat I/O
 
-- AWS Hosted Project: [3.133.164.139](http://3.133.164.139)
-- Served with NGINX and Gunicorn
-
 ## Overview
 
 This application is a simple web chat application that allows real time web chat. The application uses the Socket IO library to allow for realtime
@@ -55,14 +52,6 @@ A tempplating library used to render javascript templates into HTML
 #### Bootstrap
 
 This is used for simple layout design and buttons
-
-#### NGINX
-
-Server proxy for static files
-
-#### Gunicorn
-
-Server for python scripts
 
 
 ## Created by
