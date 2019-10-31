@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <!-- MAIN VHAT AREA -->
+    <!-- MAIN CHAT AREA -->
     <div class="row no-gutters">
         <div class="col-md-8 order-2">
             <main id="main-chat">                
@@ -130,7 +130,7 @@
         </div>                
     </div>
 </script>
-
+<!-- CHAT MESSAGE IN MAIN CHAT AREA -->
 <script id="chat-msg-script" type="text/x-handlebars-template">
     <div class="{{ msg-class }}">
         <p class="{{ name-class }}">@{{ username }} :</p>
@@ -139,6 +139,7 @@
     </div>
 </script>
 
+<!-- USERNAME NEXT TO CHAT INPUT TEXT -->
 <script id="username-input-template" type="text/x-handlebars-template">
     <div class="input-group-prepend" id="input-username">
         <span class="input-group-text" id="username-chat">@{{ username }} : </span>

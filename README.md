@@ -45,6 +45,13 @@ Client side javascript library used to allow for realtime interaction with the s
 
 A tempplating library used to render javascript templates into HTML
 
+##### Templates used
+
+- Login form
+- Chat message
+- User controls
+- Chat message input for username @
+
 #### Bootstrap
 
 This is used for simple layout design and buttons

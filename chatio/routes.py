@@ -20,6 +20,8 @@ def mainchat():
 def login(data):
     
     room = find_room(data['room'].lower())
+    if  room == None:
+        room = find_room('scuba')
     user = User()
     user.id = data['username']
     active_users.add(user.id)

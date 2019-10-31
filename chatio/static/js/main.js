@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('localUsername', username);
             localStorage.setItem('localRoom', data['room']);     
             username = data.username;
+            room = data.room;
         }
     });
 
@@ -256,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // ===== LISTENR EVENTS ONPAGE LOAD =====
+    // ===== LISTENER EVENTS ONPAGE LOAD =====
 
     function onPageLoadListenerEvents() {        
 
