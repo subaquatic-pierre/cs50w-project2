@@ -10,12 +10,9 @@ to user controls which include creating a room, leaving a room and login out.
 If the user has been to the site before and has not logged out or left a room they will have their details stored within local storage. The login form
 will not be represented to them, they will automatically be logged into the room they were in with the username they had.
 
-## Personal touches
+## Website
 
-- Login Form does not display if the user has local storage data
-- User can leave a room which remove room data from local storage
-- User can completely log out which rooms all local storage data
-- User controls only show on log in
+[Chat-IO](https://chat-appsocketio.herokuapp.com/)
 
 ## Technology
 
