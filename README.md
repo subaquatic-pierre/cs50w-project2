@@ -1,5 +1,26 @@
 # Chat I/O
 
+## Start Here
+
+- Clone Repo
+- Create Python virtual env
+
+  ```
+  python3 -m venv venv
+  ```
+
+- Install dependencies
+
+  ```
+    pip3 install -r requirements.txt
+  ```
+
+- Run program
+
+  ```
+    python3 run.py
+  ```
+
 ## Overview
 
 This application is a simple web chat application that allows real time web chat. The application uses the Socket IO library to allow for realtime
