@@ -1,41 +1,54 @@
 # Chat I/O
 
-## Start Here
-
-- Clone Repo
-- Create Python virtual env
-
-  ```
-  python3 -m venv venv
-  ```
-
-- Install dependencies
-
-  ```
-    pip3 install -r requirements.txt
-  ```
-
-- Run program
-
-  ```
-    python3 run.py
-  ```
-
 ## Overview
 
-This application is a simple web chat application that allows real time web chat. The application uses the Socket IO library to allow for realtime
-interaction with the server, via AJAX requests. When first visiting the site users are requested to enter a login name, the page then updates with
-the full web chat application. The user is automatically logged into the main chat group which is 'Scuba'. Once the user is logged in they have access
-to user controls which include creating a room, leaving a room and login out.
+This application is a simple web chat application that allows real time web chat. The application uses the
+Socket IO library to allow for realtime interaction with the server, via AJAX requests. When first visiting
+the site users are requested to enter a login name, the page then updates with the full web chat application.
+The user is automatically logged into the main chat group which is 'Scuba'. Once the user is logged in they
+have access to user controls which include creating a room, leaving a room and login out.
 
-If the user has been to the site before and has not logged out or left a room they will have their details stored within local storage. The login form
-will not be represented to them, they will automatically be logged into the room they were in with the username they had.
+If the user has been to the site before and has not logged out or left a room they will have their details stored
+within local storage. The login form will not be represented to them, they will automatically be logged into the
+room they were in with the username they had.
 
 ## Website
 
-[Chat-IO](https://chat-appsocketio.herokuapp.com/)
+[Chat-IO](https://chat-io.zeroisone.io/)
 
-## Technology
+## Development Mode
+
+### Help Needed
+
+- Update deps to latest versions
+
+1. Clone Repo
+
+2. Create Python virtual env
+
+```
+python3 -m venv venv
+```
+
+3. Install dependencies
+
+```
+pip3 install -r requirements.txt
+```
+
+- Run program
+
+```
+python3 run.py
+```
+
+## Production Mode
+
+```sh
+gunicorn -k flask_sockets.worker run:app -b 127.0.0.1:5000
+```
+
+## Project Stats
 
 ### Languages
 
