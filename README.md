@@ -45,7 +45,7 @@ python3 run.py
 ## Production Mode
 
 ```sh
-gunicorn -k flask_sockets.worker run:app -b 127.0.0.1:5000
+gunicorn -k flask_sockets.worker run:app -b 127.0.0.1:8007
 ```
 
 ## Project Stats
