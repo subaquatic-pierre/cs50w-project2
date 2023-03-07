@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # Config app from /home/etc/cs50w/project2/config.json file loaded into config.py class of Config
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")
-app.config["DEBUG"] = os.getenv("FLASK_DEBUG")
+# app.config["DEBUG"] = os.getenv("FLASK_DEBUG")
 
 
 # Unit socketIO
