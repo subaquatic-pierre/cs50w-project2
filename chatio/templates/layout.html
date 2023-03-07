@@ -45,9 +45,16 @@
 
     <footer id="footer" class="bg-info text-light mt-5 py-4">
       <div class="container text-center">
-        <p class="">&copy; Chat I/0 2019</p>
+        <p class="">&copy; Chat I/0 <span id="year"></span></p>
       </div>
     </footer>
+
+    <script>
+      const yearEl = document.getElementById("year");
+      if (yearEl) {
+        yearEl.innerText = new Date().getFullYear();
+      }
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

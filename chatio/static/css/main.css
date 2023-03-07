@@ -1,145 +1,146 @@
 body {
-    line-height: 1;
+  line-height: 1;
 }
 
 * {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 #username-input-group {
-    margin-bottom: 0px!important;
+  margin-bottom: 0px !important;
 }
 
 #form-grp {
-    margin-bottom: 0px!important;
+  margin-bottom: 0px !important;
 }
 
 #username-chat {
-    border-radius: 0px!important;
+  border-radius: 0px !important;
 }
 
 #submit {
-    border-radius: 0px!important;
+  border-radius: 0px !important;
 }
 
 #message {
-    border-radius: 0px!important;
+  border-radius: 0px !important;
 }
 #messageFormInput {
-    padding-right: 0px!important;
+  padding-right: 0px !important;
 }
 
 #sub-btn {
-    padding-left: 0px!important;
+  padding-left: 0px !important;
 }
 
-#message:focus{
-    outline: none!important;
-    box-shadow: none;
-    border: 1px solid #ced4da;
+#message:focus {
+  outline: none !important;
+  box-shadow: none;
+  border: 1px solid #ced4da;
 }
 
 #main-chat {
-    height: 600px;
-    background:#eee;
-    padding: 15px;
-    overflow:auto;
+  height: 600px;
+  background: #eee;
+  padding: 15px;
+  overflow: auto;
 }
 
 p {
-    padding: 0;
-    margin-bottom: 18px;
-    line-height: 1;
+  padding: 0;
+  margin-bottom: 18px;
+  line-height: 1;
 }
 
 span {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #room-list {
-    height: 600px;
-    overflow-y: auto;
+  height: 600px;
+  overflow-y: auto;
 }
 
 #user-list {
-    height: 600px;
-    overflow-y: auto;
+  height: 600px;
+  overflow-y: auto;
 }
 
 a {
-    font-style: none;
-    cursor: pointer;
+  font-style: none;
+  cursor: pointer;
 }
 
 .nav-link {
-    text-transform: uppercase;
-    font-size: 18px;
-    color: white!important;
+  text-transform: uppercase;
+  font-size: 18px;
+  color: white !important;
 }
 
 .navbar-brand {
-    font-size: 24px;
+  font-size: 24px;
 }
 
 .list-group-item {
-    border-radius: 0!important;
-    cursor: pointer;
+  border-radius: 0 !important;
+  cursor: pointer;
 }
 
 .my-msg {
-    font-size: 18px;
-    padding: 10px 14px;
-    color: white;
-    background-color: rgb(68, 141, 117);
-    border-radius:5px;
-    margin-bottom: 18px;
-
+  font-size: 18px;
+  padding: 10px 14px;
+  color: white;
+  background-color: rgb(68, 141, 117);
+  border-radius: 5px;
+  margin-bottom: 18px;
 }
 
 .my-name {
-    font-size: 16px;
-    color: rgb(212, 212, 212);
+  font-size: 16px;
+  color: rgb(212, 212, 212);
 }
 
 .other-msg {
-    font-size: 18px;
-    padding: 10px 14px;
-    color: white;
-    text-align: end;
-    background-color: rgb(101, 91, 231);
-    border-radius:5px;
-    margin-bottom: 18px;
-
+  font-size: 18px;
+  padding: 10px 14px;
+  color: white;
+  text-align: end;
+  background-color: rgb(101, 91, 231);
+  border-radius: 5px;
+  margin-bottom: 18px;
 }
 
 .other-name {
-    font-size: 16px;
-    color: rgb(212, 212, 212);
+  font-size: 16px;
+  color: rgb(212, 212, 212);
 }
 
 .time {
-    color: rgb(212, 212, 212);
-    font-size: 11px;
-    line-height: .8;
+  color: rgb(212, 212, 212);
+  font-size: 11px;
+  line-height: 0.8;
 }
 
 .other-msg-div {
-    display: flex;
-    justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .my-msg-div {
-    display: flex;
-    justify-content: flex-start;
+  display: flex;
+  justify-content: flex-start;
 }
 
 p {
-    line-height: 1.5;
-    margin: 0;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .sys-msg {
-    margin-bottom: 18px;
+  margin-bottom: 18px;
 }
 
+#main-chat-page {
+  min-height: calc(88vh - 11px);
+}
